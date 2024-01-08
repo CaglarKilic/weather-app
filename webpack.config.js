@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWwebpackPlugin = require("html-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
   mode: "development",
@@ -14,6 +15,10 @@ module.exports = {
     new HtmlWwebpackPlugin({
       title: "Weather App",
       template: "template.html",
+    }),
+    new Dotenv({
+      path: "./.env",
+      safe: true,
     }),
   ],
   module: {
