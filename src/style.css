@@ -12,23 +12,40 @@ li {
   list-style-type: none;
 }
 
-body {
-  height: 100svh;
-  padding: 5svh 20svw;
+.unselected {
+  cursor: pointer;
+  color: #9aa0a6;
 }
 
-.fahrenheit {
-  visibility: hidden;
+.hidden {
+  display: none;
+}
+
+body {
+  height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.widget {
+  width: max-content;
 }
 
 section#current {
   display: grid;
-  grid-template-rows: repeat(5, auto);
-  grid-template-columns: repeat(4, min-content) 200px min-content;
+  width: 100%;
+  grid-template-columns: repeat(4, min-content) auto min-content;
 
-  #name {
+  h2:nth-child(1) {
     grid-row: 1;
     grid-column: 1 / span 6;
+  }
+
+  #region {
+    grid-row: 2;
+    grid-column: 1 / span 6;
+    padding-bottom: 1rem;
   }
 
   #icon {
@@ -39,7 +56,6 @@ section#current {
   #temp_c,
   #temp_f {
     grid-row: 3 / span 5;
-    grid-column: 2;
     align-self: center;
     font-size: 3rem;
   }
@@ -62,21 +78,42 @@ section#current {
     grid-column: 4;
   }
 
-  #feelslike_c,
-  #feelslike_f {
-    grid-row: 3;
+  div.extra {
+    display: flex;
+    flex-direction: column;
+    color: #9aa0a6;
+    font-size: 14px;
+    grid-row: 3 / span 5;
     grid-column: 5;
+    padding-left: 0.5rem;
   }
 
-  #humidity {
-    grid-row: 4;
-    grid-column: 5;
+  :is(#feelslike_c, #feelslike_f)::before {
+    content: "Feels like: ";
   }
 
-  #wind_kph,
-  #wind_mph {
-    grid-row: 5;
-    grid-column: 5;
+  :is(#feelslike_c, #feelslike_f)::after {
+    content: "\00B0";
+  }
+
+  #humidity::before {
+    content: "Humidity: ";
+  }
+
+  #humidity::after {
+    content: "%";
+  }
+
+  :is(#wind_kph, #wind_mph)::before {
+    content: "Wind: ";
+  }
+
+  #wind_kph::after {
+    content: " km/h";
+  }
+
+  #wind_mph::after {
+    content: " mph";
   }
 
   h3:last-of-type {
@@ -87,17 +124,23 @@ section#current {
   #localtime {
     grid-row: 4;
     grid-column: 6;
+    color: #9aa0a6;
   }
 
   #text {
     grid-row: 5;
     grid-column: 6;
+    color: #9aa0a6;
   }
 }
 
 section#forecast {
+  h2 {
+    padding: 2rem 0 1rem 0;
+  }
   ul {
     display: flex;
+    gap: 1rem;
 
     li {
       display: grid;
@@ -117,11 +160,17 @@ section#forecast {
       .max-temp {
         grid-row: 3;
         grid-column: 1;
+        justify-self: center;
       }
 
       .min-temp {
         grid-row: 3;
         grid-column: 2;
+        justify-self: center;
+      }
+
+      :is(.max-temp, .min-temp)::after {
+        content: "\00B0";
       }
     }
   }

@@ -84,8 +84,9 @@ import IconMap from "./assets/data/weather_conditions.json";
   function dispayData(data) {
     const location = filterLocationData(data.location);
     document.querySelector("#name").append(location.name);
-    document.querySelector("#region").append(`${location.region},`);
-    document.querySelector("#country").append(location.country);
+    document
+      .querySelector("#region")
+      .append(`${location.region}, ${location.country}`);
     document
       .querySelector("#localtime")
       .append(timeFormat.format(new Date(location.localtime)));
@@ -101,8 +102,12 @@ import IconMap from "./assets/data/weather_conditions.json";
     });
     document.querySelector("#temp_c").append(current.temp_c);
     document.querySelector("#temp_f").append(current.temp_f);
-    document.querySelector("#feelslike_c").append(Math.round(current.feelslike_c));
-    document.querySelector("#feelslike_f").append(Math.round(current.feelslike_f));
+    document
+      .querySelector("#feelslike_c")
+      .append(Math.round(current.feelslike_c));
+    document
+      .querySelector("#feelslike_f")
+      .append(Math.round(current.feelslike_f));
     document.querySelector("#humidity").append(Math.round(current.humidity));
     document.querySelector("#wind_kph").append(Math.round(current.wind_kph));
     document.querySelector("#wind_mph").append(Math.round(current.wind_mph));
@@ -115,9 +120,13 @@ import IconMap from "./assets/data/weather_conditions.json";
         timeFormat.format(new Date(day.date)).slice(0, 3)
       );
       li.querySelector(".min-temp.celsius").append(Math.round(day.mintemp_c));
-      li.querySelector(".min-temp.fahrenheit").append(Math.round(day.mintemp_f));
+      li.querySelector(".min-temp.fahrenheit").append(
+        Math.round(day.mintemp_f)
+      );
       li.querySelector(".max-temp.celsius").append(Math.round(day.maxtemp_c));
-      li.querySelector(".max-temp.fahrenheit").append(Math.round(day.maxtemp_f));
+      li.querySelector(".max-temp.fahrenheit").append(
+        Math.round(day.maxtemp_f)
+      );
       import(
         /* webpackInclude:/\.png$/ */ `./assets/weather/day/${
           IconMap.find((element) => element.code === day.code).icon
@@ -127,6 +136,40 @@ import IconMap from "./assets/data/weather_conditions.json";
       });
     }
   }
+
+  function changeUnit(event) {
+    if (event.target.id === "fahrenheit") {
+      event.target.classList.remove("unselected");
+      document
+        .querySelectorAll(".celsius")
+        .forEach((elem) => elem.classList.add("hidden"));
+      document
+        .querySelectorAll(".fahrenheit")
+        .forEach((elem) => elem.classList.remove("hidden"));
+      document.querySelector("#celsius").classList.add("unselected");
+      document
+        .querySelector("#celsius")
+        .addEventListener("click", changeUnit, { once: true });
+    } else {
+      event.target.classList.remove("unselected");
+      document
+        .querySelectorAll(".celsius")
+        .forEach((elem) => elem.classList.remove("hidden"));
+      document
+        .querySelectorAll(".fahrenheit")
+        .forEach((elem) => elem.classList.add("hidden"));
+      document.querySelector("#fahrenheit").classList.add("unselected");
+      document
+        .querySelector("#fahrenheit")
+        .addEventListener("click", changeUnit, { once: true });
+    }
+  }
+
+  document
+    .querySelectorAll(".fahrenheit")
+    .forEach((elem) => elem.classList.add("hidden"));
+
+  document.querySelector("#fahrenheit").addEventListener("click", changeUnit);
 
   console.log(JSON.parse(localStorage.getItem("bostanciForecast")));
   const d = JSON.parse(localStorage.getItem("bostanciForecast"));
