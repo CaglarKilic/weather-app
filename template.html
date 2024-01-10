@@ -6,7 +6,7 @@
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
   <body>
-    <section>
+    <section id="current">
       <h2 id="name"></h2>
       <h3 id="region"></h3>
       <h3 id="country"></h3>
@@ -21,6 +21,67 @@
       <h3>Weather</h3>
       <span id="localtime"></span>
       <span id="text"></span>
+    </section>
+    <section id="forecast">
+      <h2>Forecast</h2>
+      <ul>
+        <li data-day="0">
+          <span class="day"></span><img src="" alt="" class="icon" /><span
+            class="min-temp celsius"
+          ></span
+          ><span class="min-temp fahrenheit"></span
+          ><span class="max-temp celsius"></span
+          ><span class="max-temp fahrenheit"></span>
+        </li>
+        <li data-day="1">
+          <span class="day"></span><img src="" alt="" class="icon" /><span
+            class="min-temp celsius"
+          ></span
+          ><span class="min-temp fahrenheit"></span
+          ><span class="max-temp celsius"></span
+          ><span class="max-temp fahrenheit"></span>
+        </li>
+        <li data-day="2">
+          <span class="day"></span><img src="" alt="" class="icon" /><span
+            class="min-temp celsius"
+          ></span
+          ><span class="min-temp fahrenheit"></span
+          ><span class="max-temp celsius"></span
+          ><span class="max-temp fahrenheit"></span>
+        </li>
+        <li data-day="3">
+          <span class="day"></span><img src="" alt="" class="icon" /><span
+            class="min-temp celsius"
+          ></span
+          ><span class="min-temp fahrenheit"></span
+          ><span class="max-temp celsius"></span
+          ><span class="max-temp fahrenheit"></span>
+        </li>
+        <li data-day="4">
+          <span class="day"></span><img src="" alt="" class="icon" /><span
+            class="min-temp celsius"
+          ></span
+          ><span class="min-temp fahrenheit"></span
+          ><span class="max-temp celsius"></span
+          ><span class="max-temp fahrenheit"></span>
+        </li>
+        <li data-day="5">
+          <span class="day"></span><img src="" alt="" class="icon" /><span
+            class="min-temp celsius"
+          ></span
+          ><span class="min-temp fahrenheit"></span
+          ><span class="max-temp celsius"></span
+          ><span class="max-temp fahrenheit"></span>
+        </li>
+        <li data-day="6">
+          <span class="day"></span><img src="" alt="" class="icon" /><span
+            class="min-temp celsius"
+          ></span
+          ><span class="min-temp fahrenheit"></span
+          ><span class="max-temp celsius"></span
+          ><span class="max-temp fahrenheit"></span>
+        </li>
+      </ul>
     </section>
   </body>
 </html>

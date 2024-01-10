@@ -5,38 +5,37 @@ import IconMap from "./assets/data/weather_conditions.json";
 
 (() => {
   const base = new URL(process.env.BASE_URL);
-  const curr = new URL(process.env.CURRENT_URL, base);
-  curr.searchParams.append("key", process.env.WEATHER_API_KEY);
+  const forecast = new URL(process.env.FORECAST_URL, base);
+  forecast.searchParams.append("key", process.env.WEATHER_API_KEY);
   const timeFormat = new Intl.DateTimeFormat("en-US", { weekday: "long" });
 
-  async function getCurrentWeather(query) {
-    curr.searchParams.set("q", query);
-    const response = await fetch(curr);
+  async function getForecastWeather(query, days) {
+    forecast.searchParams.set("q", query);
+    forecast.searchParams.set("days", days);
+    const response = await fetch(forecast);
     const data = await response.json();
     return data;
   }
 
-  function formatData(data) {
+  function filterLocationData(data) {
+    const { name, region, country, localtime } = data;
+    return { name, region, country, localtime };
+  }
+
+  function filterCurrentData(data) {
     const {
-      location: { name, region, country, localtime },
-      current: {
-        condition: { code, text },
-        temp_c,
-        temp_f,
-        feelslike_c,
-        feelslike_f,
-        humidity,
-        // wind_dir,
-        wind_kph,
-        wind_mph,
-        is_day,
-      },
+      condition: { code, text },
+      temp_c,
+      temp_f,
+      feelslike_c,
+      feelslike_f,
+      humidity,
+      wind_kph,
+      wind_mph,
+      is_day,
     } = data;
+
     return {
-      name,
-      region,
-      country,
-      localtime,
       code,
       text,
       temp_c,
@@ -44,36 +43,90 @@ import IconMap from "./assets/data/weather_conditions.json";
       feelslike_c,
       feelslike_f,
       humidity,
-      // wind_dir,
       wind_kph,
       wind_mph,
       is_day,
     };
   }
 
-  function displayCurrentData(data) {
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "localtime") {
-        document
-          .querySelector(`#${key}`)
-          .append(timeFormat.format(new Date(value)));
-      } else if (key === "code") {
-        const path = `./assets/weather/${data.is_day ? "day" : "night"}/${
-          IconMap.find((element) => element.code === value).icon
-        }.png`;
-        import(/* webpackInclude: /\.png$/ */ `${path}`).then((module) => {
-          document.querySelector("#icon").src = module.default;
-        });
-      } else {
-        try {
-          document.querySelector(`#${key}`).append(value);
-        } catch {
-          /* empty */
-        }
-      }
-    });
+  function filterForecastDayData(data) {
+    const {
+      date,
+      day: {
+        avghumidity,
+        condition: { code, text },
+        daily_chance_of_rain,
+        daily_chance_of_snow,
+        maxtemp_c,
+        maxtemp_f,
+        maxwind_kph,
+        maxwind_mph,
+        mintemp_c,
+        mintemp_f,
+      },
+    } = data;
+    return {
+      date,
+      avghumidity,
+      code,
+      text,
+      daily_chance_of_rain,
+      daily_chance_of_snow,
+      maxtemp_c,
+      maxtemp_f,
+      maxwind_kph,
+      maxwind_mph,
+      mintemp_c,
+      mintemp_f,
+    };
   }
 
-  const d = formatData(JSON.parse(localStorage.getItem("bostanci")));
-  displayCurrentData(d);
+  function dispayData(data) {
+    const location = filterLocationData(data.location);
+    document.querySelector("#name").append(location.name);
+    document.querySelector("#region").append(location.region);
+    document.querySelector("#country").append(location.country);
+    document
+      .querySelector("#localtime")
+      .append(timeFormat.format(new Date(location.localtime)));
+
+    const current = filterCurrentData(data.current);
+    document.querySelector("#text").append(current.text);
+    import(
+      /* webpackInclude:/\.png$/ */ `./assets/weather/${
+        current.is_day ? "day" : "night"
+      }/${IconMap.find((element) => element.code === current.code).icon}.png`
+    ).then((module) => {
+      document.querySelector("#icon").src = module.default;
+    });
+    document.querySelector("#temp_c").append(current.temp_c);
+    document.querySelector("#temp_f").append(current.temp_f);
+    document.querySelector("#humidity").append(current.humidity);
+    document.querySelector("#wind_kph").append(current.wind_kph);
+    document.querySelector("#wind_mph").append(current.wind_mph);
+
+    const days = data.forecast.forecastday;
+    for (let index = 0; index < days.length; index += 1) {
+      const day = filterForecastDayData(days[index]);
+      const li = document.querySelector(`li[data-day="${index}"]`);
+      li.querySelector(".day").append(
+        timeFormat.format(new Date(day.date)).slice(0, 3)
+      );
+      li.querySelector(".min-temp.celsius").append(day.mintemp_c);
+      li.querySelector(".min-temp.fahrenheit").append(day.mintemp_f);
+      li.querySelector(".max-temp.celsius").append(day.maxtemp_c);
+      li.querySelector(".max-temp.fahrenheit").append(day.maxtemp_f);
+      import(
+        /* webpackInclude:/\.png$/ */ `./assets/weather/day/${
+          IconMap.find((element) => element.code === day.code).icon
+        }.png`
+      ).then((module) => {
+        li.querySelector(".icon").src = module.default;
+      });
+    }
+  }
+
+  console.log(JSON.parse(localStorage.getItem("bostanciForecast")));
+  const d = JSON.parse(localStorage.getItem("bostanciForecast"));
+  dispayData(d);
 })();
