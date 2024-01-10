@@ -83,16 +83,18 @@ import IconMap from "./assets/data/weather_conditions.json";
 
   function dispayData(data) {
     const location = filterLocationData(data.location);
-    document.querySelector("#name").append(location.name);
+    document.querySelector("#name").replaceChildren(location.name);
     document
       .querySelector("#region")
-      .append(`${location.region}, ${location.country}`);
+      .replaceChildren(`${location.region}, ${location.country}`);
     document
       .querySelector("#localtime")
-      .append(timeFormat.format(new Date(location.localtime)));
+      .replaceChildren(
+        `${timeFormat.format(new Date(location.localtime))} Now`
+      );
 
     const current = filterCurrentData(data.current);
-    document.querySelector("#text").append(current.text);
+    document.querySelector("#text").replaceChildren(current.text);
     import(
       /* webpackInclude:/\.png$/ */ `./assets/weather/${
         current.is_day ? "day" : "night"
@@ -100,31 +102,41 @@ import IconMap from "./assets/data/weather_conditions.json";
     ).then((module) => {
       document.querySelector("#icon").src = module.default;
     });
-    document.querySelector("#temp_c").append(current.temp_c);
-    document.querySelector("#temp_f").append(current.temp_f);
+    document.querySelector("#temp_c").replaceChildren(current.temp_c);
+    document.querySelector("#temp_f").replaceChildren(current.temp_f);
     document
       .querySelector("#feelslike_c")
-      .append(Math.round(current.feelslike_c));
+      .replaceChildren(Math.round(current.feelslike_c));
     document
       .querySelector("#feelslike_f")
-      .append(Math.round(current.feelslike_f));
-    document.querySelector("#humidity").append(Math.round(current.humidity));
-    document.querySelector("#wind_kph").append(Math.round(current.wind_kph));
-    document.querySelector("#wind_mph").append(Math.round(current.wind_mph));
+      .replaceChildren(Math.round(current.feelslike_f));
+    document
+      .querySelector("#humidity")
+      .replaceChildren(Math.round(current.humidity));
+    document
+      .querySelector("#wind_kph")
+      .replaceChildren(Math.round(current.wind_kph));
+    document
+      .querySelector("#wind_mph")
+      .replaceChildren(Math.round(current.wind_mph));
 
     const days = data.forecast.forecastday;
     for (let index = 0; index < days.length; index += 1) {
       const day = filterForecastDayData(days[index]);
       const li = document.querySelector(`li[data-day="${index}"]`);
-      li.querySelector(".day").append(
+      li.querySelector(".day").replaceChildren(
         timeFormat.format(new Date(day.date)).slice(0, 3)
       );
-      li.querySelector(".min-temp.celsius").append(Math.round(day.mintemp_c));
-      li.querySelector(".min-temp.fahrenheit").append(
+      li.querySelector(".min-temp.celsius").replaceChildren(
+        Math.round(day.mintemp_c)
+      );
+      li.querySelector(".min-temp.fahrenheit").replaceChildren(
         Math.round(day.mintemp_f)
       );
-      li.querySelector(".max-temp.celsius").append(Math.round(day.maxtemp_c));
-      li.querySelector(".max-temp.fahrenheit").append(
+      li.querySelector(".max-temp.celsius").replaceChildren(
+        Math.round(day.maxtemp_c)
+      );
+      li.querySelector(".max-temp.fahrenheit").replaceChildren(
         Math.round(day.maxtemp_f)
       );
       import(
@@ -169,9 +181,26 @@ import IconMap from "./assets/data/weather_conditions.json";
     .querySelectorAll(".fahrenheit")
     .forEach((elem) => elem.classList.add("hidden"));
 
-  document.querySelector("#fahrenheit").addEventListener("click", changeUnit);
+  document
+    .querySelector("#fahrenheit")
+    .addEventListener("click", changeUnit, { once: true });
 
-  console.log(JSON.parse(localStorage.getItem("bostanciForecast")));
-  const d = JSON.parse(localStorage.getItem("bostanciForecast"));
-  dispayData(d);
+  document.querySelector("input").addEventListener("keydown", (event) => {
+    const backdrop = document.querySelector(".backdrop");
+    if (event.key === "Enter") {
+      const query = event.target.value;
+      getForecastWeather(query, 7).then((resolve) => {
+        dispayData(resolve);
+        backdrop.classList.add("hidden");
+      });
+      backdrop.classList.remove("hidden");
+      // eslint-disable-next-line no-param-reassign
+      event.target.value = "";
+      event.target.blur();
+    }
+  });
+
+  getForecastWeather("kadikoy, istanbul", 7).then((resolve) =>
+    dispayData(resolve)
+  );
 })();

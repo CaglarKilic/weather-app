@@ -6,6 +6,15 @@
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
   <body>
+    <div class="hidden backdrop">
+      <div class="loader"></div>
+    </div>
+    <input
+      type="search"
+      name="query"
+      id="query"
+      placeholder="Search for a place..."
+    />
     <div class="widget">
       <section id="current">
         <h2 id="name"></h2>
