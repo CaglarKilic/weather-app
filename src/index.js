@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
-
+import "./style.css";
 import IconMap from "./assets/data/weather_conditions.json";
 
 (() => {
@@ -84,7 +84,7 @@ import IconMap from "./assets/data/weather_conditions.json";
   function dispayData(data) {
     const location = filterLocationData(data.location);
     document.querySelector("#name").append(location.name);
-    document.querySelector("#region").append(location.region);
+    document.querySelector("#region").append(`${location.region},`);
     document.querySelector("#country").append(location.country);
     document
       .querySelector("#localtime")
@@ -101,9 +101,11 @@ import IconMap from "./assets/data/weather_conditions.json";
     });
     document.querySelector("#temp_c").append(current.temp_c);
     document.querySelector("#temp_f").append(current.temp_f);
-    document.querySelector("#humidity").append(current.humidity);
-    document.querySelector("#wind_kph").append(current.wind_kph);
-    document.querySelector("#wind_mph").append(current.wind_mph);
+    document.querySelector("#feelslike_c").append(Math.round(current.feelslike_c));
+    document.querySelector("#feelslike_f").append(Math.round(current.feelslike_f));
+    document.querySelector("#humidity").append(Math.round(current.humidity));
+    document.querySelector("#wind_kph").append(Math.round(current.wind_kph));
+    document.querySelector("#wind_mph").append(Math.round(current.wind_mph));
 
     const days = data.forecast.forecastday;
     for (let index = 0; index < days.length; index += 1) {
@@ -112,10 +114,10 @@ import IconMap from "./assets/data/weather_conditions.json";
       li.querySelector(".day").append(
         timeFormat.format(new Date(day.date)).slice(0, 3)
       );
-      li.querySelector(".min-temp.celsius").append(day.mintemp_c);
-      li.querySelector(".min-temp.fahrenheit").append(day.mintemp_f);
-      li.querySelector(".max-temp.celsius").append(day.maxtemp_c);
-      li.querySelector(".max-temp.fahrenheit").append(day.maxtemp_f);
+      li.querySelector(".min-temp.celsius").append(Math.round(day.mintemp_c));
+      li.querySelector(".min-temp.fahrenheit").append(Math.round(day.mintemp_f));
+      li.querySelector(".max-temp.celsius").append(Math.round(day.maxtemp_c));
+      li.querySelector(".max-temp.fahrenheit").append(Math.round(day.maxtemp_f));
       import(
         /* webpackInclude:/\.png$/ */ `./assets/weather/day/${
           IconMap.find((element) => element.code === day.code).icon
